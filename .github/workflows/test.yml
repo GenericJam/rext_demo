@@ -25,14 +25,14 @@ jobs:
     steps:
       # rext_demo depends on rext (and rext_dev, dev-only) via path deps, so
       # they must be checked out as siblings.
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           path: rext_demo
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           repository: genericjam/rext
           path: rext
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           repository: genericjam/rext_dev
           path: rext_dev
