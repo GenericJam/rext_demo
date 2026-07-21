@@ -1,6 +1,6 @@
-# rect_demo
+# rext_demo
 
-Proof-of-concept app for [rect](../rect) — mob's desktop sibling. Two windows
+Proof-of-concept app for [rext](../rext) — mob's desktop sibling. Two windows
 that stay in sync purely by BEAM message passing, showing the desktop paradigm:
 an app is *several* windows at once, each its own supervised process.
 
@@ -9,18 +9,18 @@ an app is *several* windows at once, each its own supervised process.
   sends `{:sync_count, n}` to the mirror process, which re-renders. No shared
   state, no navigation stack: two processes talking.
 
-Generated with `mix rect.new` and extended.
+Generated with `mix rext.new` and extended.
 
 ## Run it
 
 ```bash
-# from a checkout with rect / rect_dev as siblings, as your normal login user
+# from a checkout with rext / rext_dev as siblings, as your normal login user
 mix deps.get
-mix rect.run            # builds the renderer if needed, opens the window
-mix rect.connect        # drive from IEx / an agent (separate terminal)
+mix rext.run            # builds the renderer if needed, opens the window
+mix rext.connect        # drive from IEx / an agent (separate terminal)
 ```
 
-`mix rect.run` builds the native renderer on first use (no separate build step),
+`mix rext.run` builds the native renderer on first use (no separate build step),
 boots the app, and launches a renderer for the app's **primary window** (`main`,
 the counter). One renderer draws one window — a multi-window app runs one
 renderer per window; the mirror's state is still observable over dist.
@@ -33,11 +33,11 @@ Or drive it directly over Erlang distribution — the agent workflow, no rendere
 needed:
 
 ```elixir
-n = :"rect_demo_app@127.0.0.1"
+n = :"rext_demo_app@127.0.0.1"
 Node.connect(n)
-Rect.Test.assigns(n, "main")    #=> %{count: 0}
-Rect.Test.click(n, :inc, "main")
-Rect.Test.assigns(n, "mirror")  #=> %{count: 1}   # synced across windows
+Rext.Test.assigns(n, "main")    #=> %{count: 0}
+Rext.Test.click(n, :inc, "main")
+Rext.Test.assigns(n, "mirror")  #=> %{count: 1}   # synced across windows
 ```
 
 ## Verified
@@ -47,4 +47,4 @@ end-to-end (`+`×3 on the counter → counter and mirror both read 3).
 
 > The socket renderer currently displays a single window; multi-window rendering
 > is a follow-up. The multi-window *logic* is real and fully drivable via
-> `Rect.Test`.
+> `Rext.Test`.

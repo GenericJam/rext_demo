@@ -1,19 +1,19 @@
-defmodule RectDemoTest do
+defmodule RextDemoTest do
   use ExUnit.Case, async: false
 
-  alias Rect.Window
+  alias Rext.Window
 
   # The proof: two windows are two processes, and driving one keeps the other
   # in sync purely by message passing — no shared state, no renderer needed.
 
   setup do
-    {:ok, mirror} = Window.start_link(RectDemo.MirrorWindow, %{}, id: "mirror")
-    {:ok, counter} = Window.start_link(RectDemo.CounterWindow, %{}, id: "main")
+    {:ok, mirror} = Window.start_link(RextDemo.MirrorWindow, %{}, id: "mirror")
+    {:ok, counter} = Window.start_link(RextDemo.CounterWindow, %{}, id: "main")
     %{counter: counter, mirror: mirror}
   end
 
   test "app declares both windows" do
-    ids = for {_mod, opts} <- RectDemo.windows(), do: opts[:id]
+    ids = for {_mod, opts} <- RextDemo.windows(), do: opts[:id]
     assert "main" in ids
     assert "mirror" in ids
   end

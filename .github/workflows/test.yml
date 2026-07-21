@@ -23,19 +23,19 @@ jobs:
           - elixir: '1.20'
             otp: '29'
     steps:
-      # rect_demo depends on rect (and rect_dev, dev-only) via path deps, so
+      # rext_demo depends on rext (and rext_dev, dev-only) via path deps, so
       # they must be checked out as siblings.
       - uses: actions/checkout@v4
         with:
-          path: rect_demo
+          path: rext_demo
       - uses: actions/checkout@v4
         with:
-          repository: genericjam/rect
-          path: rect
+          repository: genericjam/rext
+          path: rext
       - uses: actions/checkout@v4
         with:
-          repository: genericjam/rect_dev
-          path: rect_dev
+          repository: genericjam/rext_dev
+          path: rext_dev
 
       - uses: erlef/setup-beam@v1
         with:
@@ -43,17 +43,17 @@ jobs:
           otp-version: ${{ matrix.otp }}
 
       - name: deps.get
-        working-directory: rect_demo
+        working-directory: rext_demo
         run: mix deps.get
       - name: compile
-        working-directory: rect_demo
+        working-directory: rext_demo
         run: mix compile --warnings-as-errors
       - name: Format check
-        working-directory: rect_demo
+        working-directory: rext_demo
         run: mix format --check-formatted
       - name: Credo (strict)
-        working-directory: rect_demo
+        working-directory: rext_demo
         run: mix credo --strict
       - name: Tests
-        working-directory: rect_demo
+        working-directory: rext_demo
         run: mix test

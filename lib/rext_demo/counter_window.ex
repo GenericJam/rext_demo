@@ -1,14 +1,14 @@
-defmodule RectDemo.CounterWindow do
+defmodule RextDemo.CounterWindow do
   @moduledoc """
   Owns the count. Every change re-renders this window and is pushed to the
   `Mirror` window by a plain `send/2` — windows are processes, so cross-window
   updates are just messages.
   """
-  use Rect.Window
+  use Rext.Window
 
   @impl true
   def mount(_params, socket) do
-    {:ok, socket |> Rect.Socket.assign(:count, 0) |> notify_mirror()}
+    {:ok, socket |> Rext.Socket.assign(:count, 0) |> notify_mirror()}
   end
 
   @impl true
@@ -48,13 +48,13 @@ defmodule RectDemo.CounterWindow do
         "reset" -> 0
       end
 
-    {:noreply, socket |> Rect.Socket.assign(:count, count) |> notify_mirror()}
+    {:noreply, socket |> Rext.Socket.assign(:count, count) |> notify_mirror()}
   end
 
   # Send the current count to the mirror window if it's up. A no-op before the
   # mirror has started (e.g. during the counter's own mount at boot).
   defp notify_mirror(socket) do
-    case Process.whereis(Rect.Window.via("mirror")) do
+    case Process.whereis(Rext.Window.via("mirror")) do
       nil -> :ok
       pid -> send(pid, {:sync_count, socket.assigns.count})
     end
