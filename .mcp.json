@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "rect": {
+      "command": "mix",
+      "args": ["rect_mcp.server"]
+    }
+  }
+}

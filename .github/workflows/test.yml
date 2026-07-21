@@ -1,0 +1,59 @@
+name: tests
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: tests-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Elixir ${{ matrix.elixir }} / OTP ${{ matrix.otp }}
+    runs-on: ubuntu-latest
+    env:
+      MIX_ENV: test
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - elixir: '1.20'
+            otp: '29'
+    steps:
+      # rect_demo depends on rect (and rect_dev, dev-only) via path deps, so
+      # they must be checked out as siblings.
+      - uses: actions/checkout@v4
+        with:
+          path: rect_demo
+      - uses: actions/checkout@v4
+        with:
+          repository: genericjam/rect
+          path: rect
+      - uses: actions/checkout@v4
+        with:
+          repository: genericjam/rect_dev
+          path: rect_dev
+
+      - uses: erlef/setup-beam@v1
+        with:
+          elixir-version: ${{ matrix.elixir }}
+          otp-version: ${{ matrix.otp }}
+
+      - name: deps.get
+        working-directory: rect_demo
+        run: mix deps.get
+      - name: compile
+        working-directory: rect_demo
+        run: mix compile --warnings-as-errors
+      - name: Format check
+        working-directory: rect_demo
+        run: mix format --check-formatted
+      - name: Credo (strict)
+        working-directory: rect_demo
+        run: mix credo --strict
+      - name: Tests
+        working-directory: rect_demo
+        run: mix test
