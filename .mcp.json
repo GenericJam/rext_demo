@@ -1,8 +1,0 @@
-{
-  "mcpServers": {
-    "rext": {
-      "command": "mix",
-      "args": ["rext_mcp.server"]
-    }
-  }
-}
