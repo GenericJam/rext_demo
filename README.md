@@ -55,13 +55,39 @@ no source tree involved beyond the packaged output), renders the native
 window, and a click driven over Erlang distribution (`Rext.Test.click/2`)
 updates it live.
 
+## Build a real installer (Windows)
+
+```bash
+mix rext.installer
+_build/prod/installer/rext_demo-<version>-setup.exe
+```
+
+Wraps the same release + renderer + launcher in an Inno Setup installer:
+Start Menu shortcut, optional desktop shortcut, proper "Apps & Features"
+registration, and an uninstaller that stops the release before removing
+files. Requires `choco install innosetup` (shells out to `ISCC.exe`, doesn't
+reimplement it). See `../rext_dev/lib/mix/tasks/rext.installer.ex`.
+
+Verified end-to-end, silently, both directions: `/VERYSILENT` install lands
+the app in `Program Files` with a working Start Menu shortcut, the installed
+app boots and renders exactly like the raw release does; `/VERYSILENT`
+uninstall — run *while the app was still running* — cleanly stopped the
+release (which self-terminates the renderer once its bridge connection
+drops) and removed every file and shortcut, no orphaned processes.
+
+This is the *cold* path only (new installs, or updates touching native code —
+the renderer, the NIF, an ERTS bump). Pure-BEAM-code hot updates are a
+separate, not-yet-built mechanism; see `../rext/PLAN.md`'s "Distribution"
+section.
+
 ## Why this repo exists
 
 Not a hand-written app — it's the smallest possible rext app, kept around to:
 
 1. Exercise `mix rext.new`'s generator template end-to-end (not just its files —
    whether the generated app actually boots and runs).
-2. Serve as the test subject for `mix rext.release`'s packaging pipeline, which
-   needs a real app with a real window to publish and launch.
+2. Serve as the test subject for `mix rext.release`/`mix rext.installer`'s
+   packaging pipeline, which needs a real app with a real window to publish,
+   install, and launch.
 
-See `CLAUDE.md` for the two framework bugs this surfaced.
+See `CLAUDE.md` for the framework bugs this surfaced.
