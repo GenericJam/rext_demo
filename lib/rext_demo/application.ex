@@ -4,7 +4,14 @@ defmodule RextDemo.Application do
 
   @impl true
   def start(_type, _args) do
-    Supervisor.start_link([], strategy: :one_for_one, name: RextDemo.Supervisor)
+    # Rext.boot/1 belongs here, not in dev tooling: RextDev.Boot is
+    # `runtime: false`, so a release that relied on it would open no windows
+    # at all. See CLAUDE.md's "framework bugs this surfaced".
+    with {:ok, pid} <-
+           Supervisor.start_link([], strategy: :one_for_one, name: RextDemo.Supervisor) do
+      Rext.boot(RextDemo)
+      {:ok, pid}
+    end
   end
 end
 

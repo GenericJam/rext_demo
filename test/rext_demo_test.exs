@@ -6,10 +6,23 @@ defmodule RextDemoTest do
   # The proof: two windows are two processes, and driving one keeps the other
   # in sync purely by message passing — no shared state, no renderer needed.
 
+  # `RextDemo.Application.start/2` calls `Rext.boot/1`, so the app's windows are
+  # already up (and hold the registered names) before any test runs. Replace
+  # them with test-owned processes so each test starts from count 0.
   setup do
-    {:ok, mirror} = Window.start_link(RextDemo.MirrorWindow, %{}, id: "mirror")
-    {:ok, counter} = Window.start_link(RextDemo.CounterWindow, %{}, id: "main")
+    mirror = restart_window(RextDemo.MirrorWindow, "mirror")
+    counter = restart_window(RextDemo.CounterWindow, "main")
     %{counter: counter, mirror: mirror}
+  end
+
+  defp restart_window(module, id) do
+    case Process.whereis(Window.via(id)) do
+      nil -> :ok
+      pid -> DynamicSupervisor.terminate_child(Rext.WindowSupervisor, pid)
+    end
+
+    {:ok, pid} = Window.start_link(module, %{}, id: id)
+    pid
   end
 
   test "app declares both windows" do
