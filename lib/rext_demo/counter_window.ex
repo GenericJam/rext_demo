@@ -15,24 +15,32 @@ defmodule RextDemo.CounterWindow do
   def render(assigns) do
     %{
       type: :column,
-      props: %{gap: :space_lg, padding: :space_xl, background: :background},
+      props: %{spacing: :space_lg, padding: :space_xl, background: :background},
       children: [
         %{
           type: :text,
-          props: %{text: "Count: #{assigns.count}", size: 34, color: :on_background},
+          props: %{text: "Count: #{assigns.count}", font_size: 34, text_color: :on_background},
           children: []
         },
         %{
           type: :row,
-          props: %{gap: :space_md},
+          props: %{spacing: :space_md},
           children: [
-            %{type: :button, props: %{label: "−", on_click: :dec, color: :surface}, children: []},
             %{
               type: :button,
-              props: %{label: "Reset", on_click: :reset, color: :surface},
+              props: %{text: "−", on_click: :dec, background: :surface},
               children: []
             },
-            %{type: :button, props: %{label: "+", on_click: :inc, color: :primary}, children: []}
+            %{
+              type: :button,
+              props: %{text: "Reset", on_click: :reset, background: :surface},
+              children: []
+            },
+            %{
+              type: :button,
+              props: %{text: "+", on_click: :inc, background: :primary},
+              children: []
+            }
           ]
         }
       ]

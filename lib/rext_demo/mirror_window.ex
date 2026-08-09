@@ -13,16 +13,16 @@ defmodule RextDemo.MirrorWindow do
   def render(assigns) do
     %{
       type: :column,
-      props: %{gap: :space_md, padding: :space_xl, background: :surface},
+      props: %{spacing: :space_md, padding: :space_xl, background: :surface},
       children: [
         %{
           type: :text,
-          props: %{text: "Mirror", size: 16, color: :muted},
+          props: %{text: "Mirror", font_size: 16, text_color: :muted},
           children: []
         },
         %{
           type: :text,
-          props: %{text: "live count: #{assigns.count}", size: 28, color: :on_surface},
+          props: %{text: "live count: #{assigns.count}", font_size: 28, text_color: :on_surface},
           children: []
         }
       ]
