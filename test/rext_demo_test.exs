@@ -83,4 +83,50 @@ defmodule RextDemoTest do
     :sys.get_state(mirror)
     assert Window.get_socket(mirror).assigns.count == -1
   end
+
+  test "typing in the counter's field mirrors keystroke by keystroke", %{
+    counter: counter,
+    mirror: mirror
+  } do
+    :ok = Window.dispatch(counter, "change", %{"tag" => "label_changed", "value" => "Tot"})
+    :sys.get_state(mirror)
+    assert Window.get_socket(mirror).assigns.label == "Tot"
+
+    :ok = Window.dispatch(counter, "change", %{"tag" => "label_changed", "value" => "Total"})
+    :sys.get_state(mirror)
+    assert Window.get_socket(mirror).assigns.label == "Total"
+  end
+
+  test "submit clears the field from the server side", %{counter: counter, mirror: mirror} do
+    :ok = Window.dispatch(counter, "change", %{"tag" => "label_changed", "value" => "scratch"})
+    :ok = Window.dispatch(counter, "submit", %{"tag" => "label_cleared"})
+    :sys.get_state(mirror)
+
+    # The value pushed *down* to a focused field is the direction a naively
+    # controlled input gets wrong, so it is worth pinning.
+    assert Window.get_socket(counter).assigns.label == ""
+    assert Window.get_socket(mirror).assigns.label == ""
+  end
+
+  # This app is the visual smoke test: one `mix rext.run` is supposed to put
+  # every node type on screen at once. That only stays true if adding a
+  # component to rext forces someone to put it here, so pin it.
+  test "the counter window uses every node type rext ships", %{counter: counter} do
+    used =
+      counter
+      |> Window.inspect()
+      |> Map.fetch!(:tree)
+      |> node_types()
+      |> MapSet.new()
+
+    missing = MapSet.difference(MapSet.new(Rext.Catalog.types()), used)
+
+    assert MapSet.size(missing) == 0,
+           "CounterWindow no longer demonstrates: #{inspect(MapSet.to_list(missing))}. " <>
+             "Add them to the window so `mix rext.run` still shows every component."
+  end
+
+  defp node_types(%{type: type} = node) do
+    [type | node |> Map.get(:children, []) |> Enum.flat_map(&node_types/1)]
+  end
 end
