@@ -111,4 +111,4 @@ end-to-end (`+`×3 on the counter → counter and mirror both read 3).
    packaging pipeline, which needs a real app with a real window to publish,
    install, and launch.
 
-See `CLAUDE.md` for the framework bugs this surfaced.
+See `AGENTS.md` for the framework bugs this surfaced.
